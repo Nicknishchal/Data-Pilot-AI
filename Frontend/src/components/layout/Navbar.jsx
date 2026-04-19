@@ -5,7 +5,7 @@ const Navbar = ({ filename, error }) => {
   return (
     <header className="h-16 border-b border-slate-800 bg-[#0b1121]/80 backdrop-blur-md sticky top-0 z-50 flex items-center justify-between px-8 shrink-0">
       <div className="flex items-center gap-6">
-        <h1 className="text-lg font-bold text-white tracking-tight md:hidden">Antigravity</h1>
+        <h1 className="text-lg font-bold text-white tracking-tight md:hidden">DataPilot AI</h1>
         
         {filename && (
           <div className="flex items-center gap-2 text-[10px] font-mono">
@@ -33,8 +33,8 @@ const Navbar = ({ filename, error }) => {
                <User className="w-4 h-4" />
             </div>
             <div className="hidden sm:block text-left">
-              <p className="text-[11px] font-bold text-slate-300 leading-none">Felix Analyst</p>
-              <p className="text-[9px] text-slate-500 mt-1 uppercase tracking-tighter">Premium Agent</p>
+              <p className="text-[11px] font-bold text-slate-300 leading-none">DataPilot AI</p>
+              
             </div>
           </div>
         </div>

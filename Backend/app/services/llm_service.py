@@ -1,99 +1,136 @@
 import google.generativeai as genai
-from app.config import settings
 import json
+import logging
+from typing import Dict, List, Any, Optional
+from app.config import settings
+
+# Configure specialized logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("LLMService")
 
 class LLMService:
     def __init__(self):
+        """Initialize Gemini with the configured API key and model."""
         genai.configure(api_key=settings.GEMINI_API_KEY)
         self.model = genai.GenerativeModel('gemini-2.5-flash')
 
-    async def generate_insights(self, summary_json: str):
-        prompt = f"""
-        Act as a senior data analyst. Analyze the following dataset summary and provide:
-        1. Executive Summary (2-3 sentences)
-        2. Strategic Roadmap: A list of 4-5 strategic items. Each item must have:
-           - "trend": A specific observation or trend discovered in the data.
-           - "action": A direct business action or recommendation based on that trend.
+    def _build_universal_prompt(self, summary: str, metrics: str, anomalies: str) -> str:
+        """Constructs a domain-agnostic, high-fidelity analysis prompt."""
+        return f"""
+        ROLES & CONTEXT:
+        You are a Universal Senior Data Analyst. You excel at interpreting ANY dataset by inferring context from column names and statistical distributions.
 
-        Return the response in JSON format with keys: 
-        'insights' (string), 
-        'strategic_roadmap' (list of objects with 'trend' and 'action' keys).
-        
-        Example structure:
-        {{
-            "insights": "Executive summary here...",
-            "strategic_roadmap": [
-                {{"trend": "High seasonal demand in Q4", "action": "Increase inventory buffer by 20% in September"}},
-                ...
-            ]
-        }}
+        INFERENCE TASK:
+        First, identify the domain of the dataset (e.g., Healthcare, Sales, HR, Education, Finance) based on the provided column names and metrics.
 
-        Dataset Summary:
-        {summary_json}
+        STRICT ANALYTICAL RULES:
+        1. NO DOMAIN ASSUMPTIONS: Do not mention 'Sales' or 'Revenue' unless the data specifically includes them. Use terms like 'Key Performance Indicators (KPIs)', 'Primary Entities', and 'Significant Segments'.
+        2. NUMERIC ENFORCEMENT: Every insight MUST contain specific numbers, percentages, or growth comparisons found in the data.
+        3. ABSOLUTE CERTAINTY: Forbid vague language. Remove words like "likely", "may", "could", "appears". Use "is", "indicates", "demonstrates".
+        4. DATA EXCLUSIVITY: Use only the provided metrics and summaries. If a metric is missing, use available ones to derive the best possible conclusion.
+        5. ACTIONABLE STRATEGY: Recommendations must be specific implementation steps tailored to the inferred domain.
+
+        INPUT DATA STREAMS:
+        ---
+        DATASET OVERVIEW & SCHEMA: 
+        {summary}
+
+        COMPUTED STATISTICAL METRICS: 
+        {metrics}
+
+        DETECTED ANOMALIES/OUTLIERS: 
+        {anomalies}
+        ---
+
+        TASK:
+        Generate a comprehensive, domain-relevant strategic report in JSON format.
+
+        REQUIRED OUTPUT FORMAT (STRICT JSON ONLY):
+        Return a valid JSON object with EXACTLY these keys:
+        - "overview": Statement of dataset context, inferred domain, volume, and data health.
+        - "business_summary": A high-level executive report focusing on the 3 most critical KPIs identified.
+        - "key_insights": A list of at least 5 strings. Each string MUST be a numeric observation.
+        - "strategic_recommendations": A list of at least 5 strings. Each string MUST be a specific business action.
+        - "anomaly_insights": Factual breakdown of unusual activity or "No significant anomalies detected."
+        - "manager_explanation": 2-3 lines of high-level business meaning using simplified language.
+
+        DO NOT use objects/dictionaries for the lists. Use ONLY flat strings.
+        Return ONLY the JSON. No markdown formatting.
         """
+
+    def _safe_json_parser(self, raw_text: str) -> Dict[str, Any]:
+        """Technically robust JSON extractor that handles markdown and malformed output."""
         try:
-            response = self.model.generate_content(prompt)
-            # Clean up potential markdown formatting in response
-            if not response.parts:
-                return {
-                    "insights": "I couldn't generate insights for this data. It might be too complex or triggered a safety filter.",
-                    "strategic_roadmap": []
-                }
+            clean_text = raw_text.strip()
+            if "```json" in clean_text:
+                clean_text = clean_text.split("```json")[-1].split("```")[0].strip()
+            elif "```" in clean_text:
+                clean_text = clean_text.split("```")[-1].split("```")[0].strip()
             
-            text = response.text.strip()
-            if text.startswith("```json"):
-                text = text[7:-3].strip()
-            return json.loads(text)
-        except Exception as e:
-            print(f"LLM Error: {str(e)}")
-            try:
-                # Try to get whatever text is available
-                fallback_text = response.text if 'response' in locals() and response.parts else "Error generating insights."
-            except:
-                fallback_text = "Analysis engine is currently unavailable."
+            parsed_data = json.loads(clean_text)
+            
+            # Key verification and normalization for structural stability
+            required_keys = ["overview", "business_summary", "key_insights", "strategic_recommendations", "anomaly_insights", "manager_explanation"]
+            for key in required_keys:
+                if key not in parsed_data:
+                    parsed_data[key] = [] if "list" in key or "insights" in key or "recommendations" in key else "Data not available."
                 
-            return {
-                "insights": fallback_text,
-                "strategic_roadmap": []
-            }
-
-    async def explain_for_manager(self, insights_text: str):
-        prompt = f"""
-        Act as a senior data analyst. Simplify the following technical insights for a non-technical manager/stakeholder.
-        Focus on high-level impact and ease of understanding.
-
-        Insights:
-        {insights_text}
-        """
-        try:
-            response = self.model.generate_content(prompt)
-            if not response.parts:
-                return "The insights are straightforward: your data is now processed and ready for review."
-            return response.text
-        except Exception as e:
-            print(f"Explanation Error: {str(e)}")
-            return "Unable to generate a simplified explanation at this time."
-
-    async def generate_sql(self, question: str, schema_info: str):
-        prompt = f"""
-        Act as a SQL expert. Based on the following table schema, generate a SQL query for the user's question.
-        Use SQLite syntax. Return ONLY the SQL query.
-
-        Schema:
-        {schema_info}
-
-        Question:
-        {question}
-        """
-        try:
-            response = self.model.generate_content(prompt)
-            if not response.parts:
-                return "-- Unable to generate SQL: Response blocked or empty."
+                # NORMALIZE: If the model returned objects instead of strings for lists (a common failure)
+                if key in ["key_insights", "strategic_recommendations"] and isinstance(parsed_data[key], list):
+                    normalized_list = []
+                    for item in parsed_data[key]:
+                        if isinstance(item, dict):
+                            # Extract the text value from the dict (handles 'observation', 'action', 'trend', etc.)
+                            text_val = item.get("observation") or item.get("action") or item.get("trend") or str(list(item.values())[-1])
+                            normalized_list.append(text_val)
+                        else:
+                            normalized_list.append(str(item))
+                    parsed_data[key] = normalized_list
             
-            sql = response.text.replace("```sql", "").replace("```", "").strip()
-            return sql
+            return parsed_data
+            
+        except (json.JSONDecodeError, ValueError) as e:
+            logger.error(f"JSON Parsing Error: {str(e)}")
+            return self._get_fallback_data()
+
+    def _get_fallback_data(self) -> Dict[str, Any]:
+        """Agnostic fallback response."""
+        return {
+            "overview": "Dataset context identified, but strategic report formatting failed.",
+            "business_summary": "High-level metrics were identified. Please review the raw statistics.",
+            "key_insights": ["High data variance detected in primary columns."],
+            "strategic_recommendations": ["Conduct manual segment analysis for deeper verification."],
+            "anomaly_insights": "No significant anomalies could be definitively mapped.",
+            "manager_explanation": "The analysis engine completed the sweep but encountered a formatting error during reporting."
+        }
+
+    async def generate_insights(self, summary: str, metrics: Optional[Dict[str, Any]] = None, anomalies: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
+        """Dynamic entry point for domain-agnostic analysis."""
+        metrics_json = json.dumps(metrics if metrics else {}, indent=2)
+        anomalies_json = json.dumps(anomalies if anomalies else [], indent=2)
+        
+        prompt = self._build_universal_prompt(summary, metrics_json, anomalies_json)
+        
+        try:
+            response = self.model.generate_content(prompt)
+            if not response.parts: return self._get_fallback_data()
+            return self._safe_json_parser(response.text)
         except Exception as e:
-            print(f"SQL Generation Error: {str(e)}")
-            return f"-- Error: {str(e)}"
+            logger.error(f"AI Generation Error: {str(e)}")
+            return self._get_fallback_data()
+
+    async def explain_for_manager(self, insights_text: str) -> str:
+        prompt = f"Summarize this data report for a CEO in 2 sentences: {insights_text}"
+        try:
+            response = self.model.generate_content(prompt)
+            return response.text.strip()
+        except: return "Summary unavailable."
+
+    async def generate_sql(self, question: str, schema_info: str) -> str:
+        prompt = f"Schema: {schema_info}\nQuestion: {question}\nReturn ONLY the SQL query."
+        try:
+            response = self.model.generate_content(prompt)
+            return response.text.replace("```sql", "").replace("```", "").strip()
+        except: return "-- SQL Error"
 
 llm_service = LLMService()

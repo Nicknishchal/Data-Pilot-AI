@@ -21,8 +21,8 @@ export const dataApi = {
     return response.data;
   },
 
-  getInsights: async (summary) => {
-    const response = await api.post('/insights', { summary });
+  getInsights: async (summary, metrics = null, anomalies = null) => {
+    const response = await api.post('/insights', { summary, metrics, anomalies });
     return response.data;
   },
 

@@ -45,7 +45,7 @@ const Dashboard = ({
           </div>
           <div className="text-center space-y-3">
             <h2 className="text-2xl font-bold text-white tracking-tight">Synthesizing Dataset</h2>
-            <p className="text-slate-400 max-w-sm text-sm leading-relaxed">We're applying statistical models and AI heuristics to generate deep insights from your data.</p>
+            <p className="text-slate-400 max-w-sm text-sm leading-relaxed">We&apos;re applying statistical models and AI heuristics to generate deep insights from your data.</p>
           </div>
         </div>
       );
@@ -95,7 +95,7 @@ const Dashboard = ({
               <div className="flex items-center justify-between mb-8">
                 <div>
                   <h3 className="text-xl font-bold text-white tracking-tight">Dataset Snapshot</h3>
-                  <p className="text-xs text-slate-500 mt-1 uppercase tracking-widest font-bold font-mono">Top 10 Records Synchronized</p>
+                  <p className="text-xs text-slate-500 mt-1 uppercase tracking-widest font-bold font-mono">Top 5 Records Synchronized</p>
                 </div>
                 <div className="px-3 py-1 bg-slate-900 border border-slate-700 rounded-lg text-[10px] font-bold text-slate-500 font-mono">
                   READ_ONLY_BUFFER

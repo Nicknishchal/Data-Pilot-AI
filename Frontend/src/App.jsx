@@ -39,34 +39,34 @@ function App() {
     try {
       // Step 1: Sequential but resilient fetching
       
+      // Fetch Anomalies FIRST so we can pass them to Insights
+      let anomalyData = null;
+      try {
+        const anomalyRes = await dataApi.getAnomalies();
+        anomalyData = anomalyRes.anomalies || [];
+        setAnomalies(anomalyData);
+      } catch (e) { console.error("Anomalies failed", e); }
+
       // Fetch Insights
       try {
-        const insightsRes = await dataApi.getInsights(summaryData);
+        // We pass the summary and any anomalies we found
+        const insightsRes = await dataApi.getInsights(summaryData, null, anomalyData);
         if (insightsRes) {
-          const formattedInsights = [
-            { type: 'key', title: 'Dataset Overview', content: insightsRes.insights || "No overview available." },
-            ...(insightsRes.strategic_roadmap || []).map((item, idx) => ({ 
-              type: 'strategy', 
-              title: `Strategic Opportunity ${idx + 1}`, 
-              trend: item.trend, 
-              action: item.action 
-            }))
-          ];
-          setInsights(formattedInsights);
-
-          // Fetch Explanation based on insights
-          if (insightsRes.insights) {
-             try {
-               const explainRes = await dataApi.getExplanation(insightsRes.insights);
-               setExplanation(explainRes.simplified_explanation);
-             } catch (e) { console.error("Explanations failed", e); }
-          }
+          setInsights(insightsRes);
+          setExplanation(insightsRes.manager_explanation);
         }
       } catch (e) {
         console.error("Insights failed", e);
-        setInsights([{ type: 'key', title: 'Analysis Error', content: "Failed to generate AI insights. Standard analysis is still available." }]);
+        setInsights({ 
+          overview: "Analysis engine encountered an error.", 
+          business_summary: "Real-time metrics unavailable.",
+          key_insights: [],
+          strategic_recommendations: [],
+          anomaly_insights: "Data processing failed.",
+          manager_explanation: "The AI analyst is temporarily offline."
+        });
       }
-
+      
       // Fetch Charts
       try {
         const chartsRes = await dataApi.getCharts();
@@ -76,12 +76,6 @@ function App() {
           { title: "Correlation Heatmap", data: chartsRes.correlation_base64 }
         ]);
       } catch (e) { console.error("Charts failed", e); }
-
-      // Fetch Anomalies
-      try {
-        const anomalyRes = await dataApi.getAnomalies();
-        setAnomalies(anomalyRes.anomalies || []);
-      } catch (e) { console.error("Anomalies failed", e); }
       
     } catch (err) {
       console.error("General failure during data acquisition:", err);

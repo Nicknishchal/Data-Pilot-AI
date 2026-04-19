@@ -12,8 +12,12 @@ router = APIRouter(prefix="", tags=["AI Agent"])
 @router.post("/insights", response_model=InsightsResponse)
 async def get_insights(request: InsightsRequest):
     try:
-        summary_json = json.dumps(request.summary.dict())
-        result = await llm_service.generate_insights(summary_json)
+        # Pass the structured data directly to the refactored LLM service
+        result = await llm_service.generate_insights(
+            summary=json.dumps(request.summary.dict()),
+            metrics=request.metrics,
+            anomalies=request.anomalies
+        )
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

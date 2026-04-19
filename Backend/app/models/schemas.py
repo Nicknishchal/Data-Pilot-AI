@@ -11,15 +11,17 @@ class DatasetSummary(BaseModel):
 
 class InsightsRequest(BaseModel):
     summary: DatasetSummary
+    metrics: Optional[Dict[str, Any]] = None
+    anomalies: Optional[List[Dict[str, Any]]] = None
     additional_context: Optional[str] = None
 
-class StrategicItem(BaseModel):
-    trend: str
-    action: str
-
 class InsightsResponse(BaseModel):
-    insights: str
-    strategic_roadmap: List[StrategicItem]
+    overview: str
+    business_summary: str
+    key_insights: List[str]
+    strategic_recommendations: List[str]
+    anomaly_insights: str
+    manager_explanation: str
 
 class ExplanationRequest(BaseModel):
     insights_text: str

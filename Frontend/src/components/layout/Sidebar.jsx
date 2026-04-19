@@ -7,8 +7,6 @@ import {
   Terminal, 
   Database,
   CloudUpload,
-  Settings,
-  CircleHelp,
   PieChart
 } from 'lucide-react';
 
@@ -30,8 +28,8 @@ const Sidebar = ({ activeTab, setActiveTab, disabled }) => {
             <Database className="text-white w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white tracking-tight">Antigravity</h1>
-            <p className="text-[10px] text-primary-400 font-bold uppercase tracking-widest leading-tight">Data Agent</p>
+            <h1 className="text-xl font-bold text-white tracking-tight">DataPilot AI</h1>
+            <p className="text-[10px] text-primary-400 font-bold uppercase tracking-widest leading-tight">Your AI-Powered Data Analyst</p>
           </div>
         </div>
 
@@ -65,11 +63,6 @@ const Sidebar = ({ activeTab, setActiveTab, disabled }) => {
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
             <span className="text-xs font-semibold text-slate-200 uppercase tracking-wide">Analysis Ready</span>
           </div>
-        </div>
-
-        <div className="flex items-center gap-3 px-4 text-slate-500 hover:text-slate-300 transition-colors cursor-pointer group">
-          <Settings className="w-4 h-4 group-hover:rotate-45 transition-transform duration-500" />
-          <span className="text-xs font-medium uppercase tracking-widest">Settings</span>
         </div>
       </div>
     </aside>

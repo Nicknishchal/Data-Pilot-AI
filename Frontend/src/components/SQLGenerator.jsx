@@ -14,7 +14,7 @@ const SQLGenerator = ({ onGenerate }) => {
     setLoading(true);
     try {
       const data = await onGenerate(query);
-      setResult(data.sql);
+      setResult(data.sql_query);
     } catch (err) {
       console.error(err);
     } finally {

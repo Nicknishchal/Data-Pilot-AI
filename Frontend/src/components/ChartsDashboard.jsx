@@ -80,11 +80,17 @@ const ChartsDashboard = ({ chartData, base64Images }) => {
       {/* Backend Rendered Base64 Images (e.g. Seaborn Heatmaps) */}
       {base64Images?.map((img, idx) => (
         <ChartCard key={`img-${idx}`} title={img.title}>
-          <img 
-            src={`data:image/png;base64,${img.data}`} 
-            alt={img.title} 
-            className="max-w-full max-h-[280px] object-contain rounded-lg"
-          />
+          {img.data ? (
+            <img 
+              src={`data:image/png;base64,${img.data}`} 
+              alt={img.title} 
+              className="max-w-full max-h-[280px] object-contain rounded-lg"
+            />
+          ) : (
+            <div className="flex flex-col items-center justify-center text-center p-8 bg-slate-800/20 rounded-xl border border-white/5 w-full h-full">
+               <p className="text-slate-500 text-xs font-medium max-w-[200px]">Insufficient numeric features to generate correlation analysis.</p>
+            </div>
+          )}
         </ChartCard>
       ))}
     </div>

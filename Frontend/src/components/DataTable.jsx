@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 
 const DataTable = ({ data, columns, highlightIndices = [] }) => {
   if (!data || data.length === 0) return null;

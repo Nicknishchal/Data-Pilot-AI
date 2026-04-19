@@ -1,6 +1,6 @@
 # DataPilot AI
 
-### Navigate Your Data with AI
+### Your AI-Powered Data Analyst
 
 **DataPilot AI** is a professional, full-stack data analysis platform that transforms raw CSV datasets into actionable business intelligence within seconds. By leveraging the power of **Google Gemini AI** and **Scikit-learn**, it provides automated insights, detects anomalies, and generates manager-friendly summaries, making data science accessible to everyone.
 

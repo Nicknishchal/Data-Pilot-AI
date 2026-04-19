@@ -1,4 +1,4 @@
-# AI Data Analyst Agent - Frontend
+# DataPilot AI - Frontend
 
 Modern, production-ready React dashboard for scanning CSV files, generating AI insights, detecting anomalies, and converting natural language to SQL.
 
