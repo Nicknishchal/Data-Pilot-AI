@@ -5,7 +5,7 @@ import json
 class LLMService:
     def __init__(self):
         genai.configure(api_key=settings.GEMINI_API_KEY)
-        self.model = genai.GenerativeModel('gemini-pro')
+        self.model = genai.GenerativeModel('gemini-2.5-flash')
 
     async def generate_insights(self, summary_json: str):
         prompt = f"""
@@ -76,7 +76,15 @@ class LLMService:
         Question:
         {question}
         """
-        response = self.model.generate_content(prompt)
-        return response.text.replace("```sql", "").replace("```", "").strip()
+        try:
+            response = self.model.generate_content(prompt)
+            if not response.parts:
+                return "-- Unable to generate SQL: Response blocked or empty."
+            
+            sql = response.text.replace("```sql", "").replace("```", "").strip()
+            return sql
+        except Exception as e:
+            print(f"SQL Generation Error: {str(e)}")
+            return f"-- Error: {str(e)}"
 
 llm_service = LLMService()
