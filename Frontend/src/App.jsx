@@ -45,8 +45,12 @@ function App() {
         if (insightsRes) {
           const formattedInsights = [
             { type: 'key', title: 'Dataset Overview', content: insightsRes.insights || "No overview available." },
-            ...(insightsRes.trends || []).map(t => ({ type: 'trend', title: 'Identified Trend', content: t })),
-            ...(insightsRes.recommendations || []).map(r => ({ type: 'recommendation', title: 'Business Action', content: r }))
+            ...(insightsRes.strategic_roadmap || []).map((item, idx) => ({ 
+              type: 'strategy', 
+              title: `Strategic Opportunity ${idx + 1}`, 
+              trend: item.trend, 
+              action: item.action 
+            }))
           ];
           setInsights(formattedInsights);
 

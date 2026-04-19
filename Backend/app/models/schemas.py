@@ -13,10 +13,13 @@ class InsightsRequest(BaseModel):
     summary: DatasetSummary
     additional_context: Optional[str] = None
 
+class StrategicItem(BaseModel):
+    trend: str
+    action: str
+
 class InsightsResponse(BaseModel):
     insights: str
-    trends: List[str]
-    recommendations: List[str]
+    strategic_roadmap: List[StrategicItem]
 
 class ExplanationRequest(BaseModel):
     insights_text: str

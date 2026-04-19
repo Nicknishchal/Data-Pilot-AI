@@ -9,13 +9,24 @@ class LLMService:
 
     async def generate_insights(self, summary_json: str):
         prompt = f"""
-        Act as a data analyst. Analyze the following dataset summary and provide:
-        1. Key Insights
-        2. Trends
-        3. Business Recommendations
+        Act as a senior data analyst. Analyze the following dataset summary and provide:
+        1. Executive Summary (2-3 sentences)
+        2. Strategic Roadmap: A list of 4-5 strategic items. Each item must have:
+           - "trend": A specific observation or trend discovered in the data.
+           - "action": A direct business action or recommendation based on that trend.
 
-        Return the response in JSON format with keys: 'insights', 'trends' (list), and 'recommendations' (list).
-        If you are unsure or the data is insufficient, say 'not enough data'.
+        Return the response in JSON format with keys: 
+        'insights' (string), 
+        'strategic_roadmap' (list of objects with 'trend' and 'action' keys).
+        
+        Example structure:
+        {{
+            "insights": "Executive summary here...",
+            "strategic_roadmap": [
+                {{"trend": "High seasonal demand in Q4", "action": "Increase inventory buffer by 20% in September"}},
+                ...
+            ]
+        }}
 
         Dataset Summary:
         {summary_json}
@@ -26,8 +37,7 @@ class LLMService:
             if not response.parts:
                 return {
                     "insights": "I couldn't generate insights for this data. It might be too complex or triggered a safety filter.",
-                    "trends": [],
-                    "recommendations": []
+                    "strategic_roadmap": []
                 }
             
             text = response.text.strip()
@@ -44,8 +54,7 @@ class LLMService:
                 
             return {
                 "insights": fallback_text,
-                "trends": [],
-                "recommendations": []
+                "strategic_roadmap": []
             }
 
     async def explain_for_manager(self, insights_text: str):
