@@ -22,7 +22,7 @@ In many modern organizations, data is abundant, but the time to analyze it is sc
 
 ---
 
-## Key Highlights (For Recruiters)
+## Key Highlights 
 
 - **AI-Native Architecture**: Deep integration with Google Gemini for natural language processing and insight generation.
 - **Production-Ready Stack**: Built with a modular FastAPI backend and a responsive, high-performance React frontend.
@@ -32,16 +32,6 @@ In many modern organizations, data is abundant, but the time to analyze it is sc
 
 ---
 
-## Demo
-
-> [!TIP]
-> *Coming Soon! Replace these placeholders with your actual project screenshots/GIFs.*
-
-| Dashboard Overview | AI Insights Engine |
-| :---: | :---: |
-| ![Placeholder Dashboard](https://via.placeholder.com/600x400?text=Dashboard+UI) | ![Placeholder AI](https://via.placeholder.com/600x400?text=AI+Insights+Summary) |
-
----
 
 ## Core Features
 
