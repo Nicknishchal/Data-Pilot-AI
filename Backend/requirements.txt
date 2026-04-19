@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+pandas
+scikit-learn
+google-generativeai
+matplotlib
+seaborn
+python-multipart
+python-dotenv
+pydantic-settings
+jinja2
+grpcio
+grpcio-tools

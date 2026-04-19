@@ -1,0 +1,104 @@
+Date,Product,Category,Price,Quantity,Revenue,Rating
+2024-01-01,Vacuum,Appliances,162.83,5,814.15,4.6
+2024-01-02,Pen,Stationery,7.38,1,7.38,4.1
+2024-01-03,Toaster,Appliances,65.42,2,130.84,4.2
+2024-01-04,Desk Chair,Furniture,248.73,5,1243.65,4.9
+2024-01-05,Folder,Stationery,14.82,18,266.76,3.3
+2024-01-06,Lamp,Furniture,444.79,20,8895.8,4.3
+2024-01-07,Blender,Appliances,277.68,12,3332.16,3.9
+2024-01-08,Sofa,Furniture,136.68,11,1503.48,4.6
+2024-01-09,Tablet,Electronics,605.11,20,12102.2,4.3
+2024-01-10,Notebook,Stationery,17.06,14,238.84,3.5
+2024-01-11,Headphones,Electronics,1474.22,9,13267.98,4.1
+2024-01-12,Sofa,Furniture,355.12,9,3196.08,3.3
+2024-01-13,Bookshelf,Furniture,459.97,3,1379.91,3.1
+2024-01-14,Laptop,Electronics,374.33,19,7112.27,4.2
+2024-01-15,Highlighter,Stationery,10.86,5,54.3,4.7
+2024-01-16,Notebook,Stationery,4.97,3,14.91,3.3
+2024-01-17,Sofa,Furniture,156.68,16,2506.88,4.9
+2024-01-18,Smartphone,Electronics,1096.59,9,9869.31,4.3
+2024-01-19,Vacuum,Appliances,147.72,7,1034.04,4.9
+2024-01-20,Highlighter,Stationery,2.0,6,12.0,3.7
+2024-01-21,Lamp,Furniture,458.77,13,5964.01,3.5
+2024-01-22,Highlighter,Stationery,6.92,16,110.72,4.9
+2024-01-23,Toaster,Appliances,153.79,8,1230.32,4.9
+2024-01-24,Laptop,Electronics,1150.76,9,10356.84,4.7
+2024-01-25,Coffee Maker,Appliances,245.52,2,491.04,3.3
+2024-01-26,Lamp,Furniture,267.13,20,5342.6,4.3
+2024-01-27,Sofa,Furniture,352.56,2,705.12,3.1
+2024-01-28,Blender,Appliances,194.73,11,2142.03,4.5
+2024-01-29,Toaster,Appliances,125.93,7,881.51,4.3
+2024-01-30,Pen,Stationery,2.88,8,23.04,3.6
+2024-01-01,Headphones,Electronics,529.93,10,5299.3,4.0
+2024-01-02,Highlighter,Stationery,15.25,16,244.0,4.2
+2024-01-03,Laptop,Electronics,1358.08,2,2716.16,4.4
+2024-01-04,Notebook,Stationery,17.91,8,143.28,4.7
+2024-01-05,Highlighter,Stationery,2.2,7,15.4,4.7
+2024-01-06,Tablet,Electronics,1074.29,18,19337.22,4.9
+2024-01-07,Tablet,Electronics,446.24,19,8478.56,3.1
+2024-01-08,Tablet,Electronics,641.84,7,4492.88,5.0
+2024-01-09,Coffee Maker,Appliances,125.53,18,2259.54,4.1
+2024-01-10,Table,Furniture,488.49,20,9769.8,5.0
+2024-01-11,Headphones,Electronics,1346.09,1,1346.09,4.2
+2024-01-12,Stapler,Stationery,3.21,2,6.42,4.5
+2024-01-13,Stapler,Stationery,10.33,18,185.94,3.4
+2024-01-14,Toaster,Appliances,285.29,11,3138.19,4.5
+2024-01-15,Table,Furniture,358.93,2,717.86,4.0
+2024-01-16,Blender,Appliances,159.9,8,1279.2,3.1
+2024-01-17,Tablet,Electronics,1277.47,16,20439.52,4.5
+2024-01-18,Folder,Stationery,18.69,16,299.04,4.0
+2024-01-19,Laptop,Electronics,320.26,4,1281.04,3.4
+2024-01-20,Table,Furniture,66.71,16,1067.36,3.6
+2024-01-21,Microwave,Appliances,99.59,18,1792.62,4.4
+2024-01-22,Lamp,Furniture,296.43,15,4446.45,3.8
+2024-01-23,Laptop,Electronics,779.89,11,8578.79,4.6
+2024-01-24,Coffee Maker,Appliances,283.15,8,2265.2,4.0
+2024-01-25,Highlighter,Stationery,5.85,10,58.5,4.7
+2024-01-26,Blender,Appliances,241.14,1,241.14,4.8
+2024-01-27,Highlighter,Stationery,7.8,10,78.0,3.6
+2024-01-28,Vacuum,Appliances,240.43,10,2404.3,3.5
+2024-01-29,Laptop,Electronics,586.51,5,2932.55,3.7
+2024-01-30,Blender,Appliances,98.6,2,197.2,3.6
+2024-01-01,Bookshelf,Furniture,305.37,13,3969.81,3.4
+2024-01-02,Folder,Stationery,19.67,20,393.4,3.4
+2024-01-03,Notebook,Stationery,2.76,8,22.08,5.0
+2024-01-04,Notebook,Stationery,9.46,12,113.52,4.6
+2024-01-05,Vacuum,Appliances,289.04,14,4046.56,3.7
+2024-01-06,Desk Chair,Furniture,358.99,11,3948.89,3.5
+2024-01-07,Microwave,Appliances,105.44,10,1054.4,3.9
+2024-01-08,Stapler,Stationery,12.88,19,244.72,3.2
+2024-01-09,Laptop,Electronics,1177.57,13,15308.41,3.2
+2024-01-10,Toaster,Appliances,106.78,3,320.34,4.4
+2024-01-11,Vacuum,Appliances,246.55,20,4931.0,3.0
+2024-01-12,Vacuum,Appliances,93.24,17,1585.08,3.4
+2024-01-13,Highlighter,Stationery,7.08,8,56.64,3.9
+2024-01-14,Bookshelf,Furniture,424.39,4,1697.56,4.4
+2024-01-15,Desk Chair,Furniture,151.15,19,2871.85,3.6
+2024-01-16,Blender,Appliances,235.75,9,2121.75,4.5
+2024-01-17,Smartphone,Electronics,1289.02,18,23202.36,3.4
+2024-01-18,Toaster,Appliances,294.9,15,4423.5,4.2
+2024-01-19,Stapler,Stationery,6.5,10,65.0,4.8
+2024-01-20,Folder,Stationery,7.36,17,125.12,4.6
+2024-01-21,Stapler,Stationery,12.91,7,90.37,4.7
+2024-01-22,Bookshelf,Furniture,499.98,14,6999.72,3.9
+2024-01-23,Laptop,Electronics,1495.46,18,26918.28,3.6
+2024-01-24,Laptop,Electronics,531.87,4,2127.48,3.9
+2024-01-25,Notebook,Stationery,10.1,5,50.5,4.3
+2024-01-26,Coffee Maker,Appliances,113.67,3,341.01,4.4
+2024-01-27,Table,Furniture,465.74,12,5588.88,3.9
+2024-01-28,Monitor,Electronics,566.69,15,8500.35,4.5
+2024-01-29,Folder,Stationery,4.05,6,24.3,4.7
+2024-01-30,Pen,Stationery,4.62,5,23.1,4.3
+2024-01-01,Lamp,Furniture,356.78,17,6065.26,4.8
+2024-01-02,Bookshelf,Furniture,291.17,10,2911.7,4.6
+2024-01-03,Notebook,Stationery,16.48,7,115.36,3.8
+2024-01-04,Stapler,Stationery,6.05,14,84.7,3.3
+2024-01-05,Highlighter,Stationery,9.85,10,98.5,4.2
+2024-01-06,Folder,Stationery,12.5,1,12.5,4.6
+2024-01-07,Folder,Stationery,13.94,2,27.88,4.6
+2024-01-08,Coffee Maker,Appliances,219.47,1,219.47,3.8
+2024-01-09,Notebook,Stationery,16.2,14,226.8,4.0
+2024-01-10,Toaster,Appliances,67.47,2,134.94,4.8
+2024-01-15,Quantum Computer,Electronics,99999.0,1,99999.0,5.0
+2024-01-20,Paperclip,Stationery,0.01,1000000,10000.0,4.0
+2024-01-25,Faulty Phone,Electronics,500.0,10,5000.0,1.0
