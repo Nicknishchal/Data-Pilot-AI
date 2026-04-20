@@ -31,8 +31,10 @@ const Dashboard = ({
   charts, 
   base64Charts, 
   anomalies, 
+  quickActions,
   handleUploadSuccess,
-  generateSql
+  generateSql,
+  generateSmartChart
 }) => {
 
   const renderContent = () => {
@@ -125,7 +127,11 @@ const Dashboard = ({
                   <p className="text-sm text-slate-500 mt-1">Multi-variate distributions and trend analysis.</p>
                 </div>
              </div>
-             <ChartsDashboard chartData={charts} base64Images={base64Charts} />
+             <ChartsDashboard 
+               chartData={charts} 
+               base64Images={base64Charts} 
+               onGenerateSmartChart={generateSmartChart}
+             />
           </div>
         );
 
@@ -157,6 +163,7 @@ const Dashboard = ({
           <div className="bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-xl">
             <SQLGenerator 
               onGenerate={(query) => generateSql(filename, query)} 
+              quickActions={quickActions}
             />
           </div>
         );

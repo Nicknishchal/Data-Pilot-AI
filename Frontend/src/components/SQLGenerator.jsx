@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
-import { FileCode, Search, Copy, Check, Terminal, Play, Loader2 } from 'lucide-react';
+import { FileCode, Search, Copy, Check, Terminal, Play, Loader2, Plus, Minus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const SQLGenerator = ({ onGenerate }) => {
+const SQLGenerator = ({ onGenerate, quickActions = [] }) => {
   const [query, setQuery] = useState("");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showAll, setShowAll] = useState(false);
+
+  // Fallback hints if no quick actions are generated
+  const displayActions = quickActions.length > 0 
+    ? quickActions 
+    : ['Growth trend', 'Regional performance', 'Customer segmentation'];
+
+  const visibleActions = showAll ? displayActions : displayActions.slice(0, 4);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -56,15 +64,34 @@ const SQLGenerator = ({ onGenerate }) => {
         </form>
         
         <div className="mt-4 flex flex-wrap gap-2">
-          {['Growth trend', 'Regional performance', 'Customer segmentation'].map((hint) => (
+          {visibleActions.map((hint) => (
             <button 
               key={hint}
-              onClick={() => setQuery(`Show me ${hint.toLowerCase()} summary`)}
+              onClick={() => setQuery(hint)}
               className="text-[10px] font-bold text-slate-500 hover:text-primary-400 border border-slate-800 hover:border-primary-500/30 px-3 py-1.5 rounded-lg transition-all bg-slate-900/50 uppercase tracking-widest"
             >
               {hint}
             </button>
           ))}
+          
+          {displayActions.length > 4 && (
+            <button 
+              onClick={() => setShowAll(!showAll)}
+              className="text-[10px] font-bold text-primary-500 hover:text-primary-400 border border-primary-500/20 hover:border-primary-500/40 px-3 py-1.5 rounded-lg transition-all bg-primary-500/5 flex items-center gap-2 uppercase tracking-widest"
+            >
+              {showAll ? (
+                <>
+                  <Minus className="w-3 h-3" />
+                  View Less
+                </>
+              ) : (
+                <>
+                  <Plus className="w-3 h-3" />
+                  View More
+                </>
+              )}
+            </button>
+          )}
         </div>
       </div>
 

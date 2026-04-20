@@ -45,6 +45,23 @@ export const dataApi = {
     const response = await api.post('/generate-sql', { question, schema_info });
     return response.data;
   },
+
+  getQuickActions: async (tableName, columns, dtypes, sampleRows) => {
+    const response = await api.post('/quick-actions', {
+      table_name: tableName,
+      columns: columns,
+      dtypes: dtypes,
+      sample_rows: sampleRows
+    });
+    return response.data;
+  },
+
+  getSmartChart: async (userQuery) => {
+    const response = await api.post('/smart-chart', {
+      user_query: userQuery
+    });
+    return response.data;
+  },
 };
 
 export default api;

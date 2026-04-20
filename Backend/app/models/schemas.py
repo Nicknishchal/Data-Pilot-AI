@@ -43,3 +43,24 @@ class AnomalyResponse(BaseModel):
 class ChartResponse(BaseModel):
     histogram_base64: str
     correlation_base64: str
+
+class QuickActionRequest(BaseModel):
+    table_name: str
+    columns: List[str]
+    dtypes: Dict[str, str]
+    sample_rows: Optional[List[Dict[str, Any]]] = None
+
+class QuickActionResponse(BaseModel):
+    quick_actions: List[str]
+
+class ChartConfigRequest(BaseModel):
+    user_query: str
+    columns: List[str]
+    dtypes: Dict[str, str]
+
+class ChartConfigResponse(BaseModel):
+    chart_type: str
+    x_axis: str
+    y_axis: Optional[str] = None
+    aggregation: str
+    title: str

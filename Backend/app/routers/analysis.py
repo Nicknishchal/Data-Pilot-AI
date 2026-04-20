@@ -51,3 +51,53 @@ async def get_charts():
         "histogram_base64": hist,
         "correlation_base64": heatmap
     }
+
+@router.post("/smart-chart")
+async def get_smart_chart(request: dict):
+    global _current_df
+    if _current_df is None:
+        raise HTTPException(status_code=400, detail="No dataset uploaded.")
+    
+    user_query = request.get("user_query")
+    if not user_query:
+        raise HTTPException(status_code=400, detail="User query is required.")
+
+    from app.services.llm_service import llm_service
+    
+    # Task 1: Data Understanding
+    profile = chart_service.profile_data(_current_df)
+    
+    # Task 3 & 7: Get Config from LLM with reasoning
+    config_request_dtypes = {}
+    for col, info in profile.items():
+        # Combine type and a 'useless' flag if it looks like an ID
+        tag = info['type']
+        if info['is_useless']:
+            tag += " (likely_id_avoid_this)"
+        config_request_dtypes[col] = tag
+
+    response = await llm_service.generate_chart_config(
+        user_query=user_query,
+        columns=_current_df.columns.tolist(),
+        dtypes=config_request_dtypes
+    )
+    
+    # Handle the restructured response
+    charts_configs = response.get("charts", [])
+    if not charts_configs and isinstance(response, list):
+        charts_configs = response # Fallback if LLM returns direct list
+    elif not charts_configs and "chart_type" in response:
+        charts_configs = [response] # Fallback if LLM returns single object
+
+    results = []
+    for config in charts_configs:
+        chart_data = chart_service.prepare_dynamic_data(_current_df, config)
+        results.append({
+            "config": config,
+            "data": chart_data,
+            "chart_type": config.get("chart_type"),
+            "title": config.get("title"),
+            "reason": config.get("reason")
+        })
+    
+    return results

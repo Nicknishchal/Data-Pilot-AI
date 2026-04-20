@@ -133,4 +133,118 @@ class LLMService:
             return response.text.replace("```sql", "").replace("```", "").strip()
         except: return "-- SQL Error"
 
+    async def generate_quick_actions(self, table_name: str, columns: List[str], dtypes: Dict[str, str], sample_rows: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
+        """Generates intelligent 'Quick Action' queries based on the dataset schema."""
+        sample_data_str = json.dumps(sample_rows[:5], indent=2) if sample_rows else "No sample data available."
+        
+        prompt = f"""
+        You are an expert data analyst and SQL expert.
+        Your task is to generate intelligent "Quick Action" queries based on the dataset schema.
+
+        CRITICAL RULES:
+        - DO NOT assume domain (infer from column names)
+        - Use ONLY provided schema
+        - Generate practical, real-world queries
+        - Queries must be simple and useful for end users
+        - Avoid generic queries like "select all data"
+        - Focus on insights, aggregations, and filtering
+
+        INPUT:
+        TABLE NAME: {table_name}
+        COLUMNS: {columns}
+        DATA TYPES: {dtypes}
+        OPTIONAL SAMPLE DATA: {sample_data_str}
+
+        TASK:
+        Generate 6–8 natural language queries that a user might ask.
+        Each query should be clear, relevant, and cover different analysis types (aggregation, grouping, filtering, anomaly detection).
+
+        RETURN ONLY VALID JSON:
+        {{
+            "quick_actions": ["query 1", "query 2", "query 3"]
+        }}
+        """
+        
+        try:
+            response = self.model.generate_content(prompt)
+            clean_text = response.text.strip()
+            if "```json" in clean_text:
+                clean_text = clean_text.split("```json")[-1].split("```")[0].strip()
+            elif "```" in clean_text:
+                clean_text = clean_text.split("```")[-1].split("```")[0].strip()
+            
+            return json.loads(clean_text)
+        except Exception as e:
+            logger.error(f"Quick Action Generation Error: {str(e)}")
+            return {"quick_actions": ["Top 5 records by value", "Average values by category", "Check for missing data"]}
+
+    async def generate_chart_config(self, user_query: str, columns: List[str], dtypes: Dict[str, str]) -> Dict[str, Any]:
+        """Task 3, 7: Intelligent Chart Selection & Universal Output."""
+        prompt = f"""
+        You are a Universal AI Visualization Engine. Convert a user's query into a precise chart configuration.
+
+        ━━━━━━━━━━━━━━━━━━━━━━━
+        TASK 1: DATA UNDERSTANDING (MANDATORY)
+        ━━━━━━━━━━━━━━━━━━━━━━━
+        COLUMNS: {columns}
+        DATA TYPES: {dtypes}
+        USER REQUEST: {user_query}
+
+        ━━━━━━━━━━━━━━━━━━━━━━━
+        TASK 3: CHART SELECTION RULES (UNIVERSAL)
+        ━━━━━━━━━━━━━━━━━━━━━━━
+        1. LINE: time-based queries or datetime columns.
+        2. PIE: distribution/percentage AND unique categories ≤ 6.
+        3. BAR: comparisons, counts, rankings.
+        4. HORIZONTAL_BAR: "top X" or "bottom X" queries.
+        5. HISTOGRAM: meaningful numeric distributions (NOT IDs).
+
+        ━━━━━━━━━━━━━━━━━━━━━━━
+        CRITICAL CONSTRAINTS (STRICT)
+        ━━━━━━━━━━━━━━━━━━━━━━━
+        1. OUTPUT LIMIT: Generate a MAXIMUM of 4 charts only.
+        2. NO DUPLICATES: Each chart must provide a UNIQUE insight. Keep only the BEST chart per topic.
+        3. IGNORE USELESS: Do NOT use columns tagged as "(likely_id_avoid_this)".
+        4. CATEGORY PREFERENCE: When looking for "categories" or "groups", ALWAYS prefer columns with string/text values over numeric columns.
+        5. MANDATORY AGGREGATION: For time series, always aggregate (count/sum). NEVER plot raw rows.
+        6. PIE LIMIT: Use Pie ONLY if unique categories ≤ 6.
+
+        ━━━━━━━━━━━━━━━━━━━━━━━
+        TASK 7: OUTPUT FORMAT (STRICT JSON ONLY)
+        ━━━━━━━━━━━━━━━━━━━━━━━
+        {{
+          "charts": [
+            {{
+              "chart_type": "bar | line | pie | horizontal_bar | scatter | histogram",
+              "x": "EXACT_COLUMN_NAME_FROM_LIST (Dimension/Label)",
+              "y": "EXACT_COLUMN_NAME_FROM_LIST | null (Metric/Value)",
+              "aggregation": "count | sum | avg",
+              "limit": "number | null",
+              "title": "Clear, user-friendly chart title",
+              "reason": "Why this chart is the BEST choice for this specific unique insight."
+            }}
+          ]
+        }}
+
+        If no chart is meaningful, return: {{"error": "Visualization not useful"}}
+        """
+        try:
+            response = self.model.generate_content(prompt)
+            clean_text = response.text.strip()
+            if "```json" in clean_text:
+                clean_text = clean_text.split("```json")[-1].split("```")[0].strip()
+            elif "```" in clean_text:
+                clean_text = clean_text.split("```")[-1].split("```")[0].strip()
+            
+            return json.loads(clean_text)
+        except Exception as e:
+            logger.error(f"Chart Config Generation Error: {str(e)}")
+            return {
+                "chart_type": "bar",
+                "x_axis": columns[0] if columns else "none",
+                "y_axis": None,
+                "aggregation": "count",
+                "title": "Default Chart"
+            }
+
 llm_service = LLMService()

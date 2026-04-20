@@ -3,7 +3,9 @@ from app.services.llm_service import llm_service
 from app.models.schemas import (
     InsightsRequest, InsightsResponse, 
     ExplanationRequest, ExplanationResponse,
-    SQLRequest, SQLResponse
+    SQLRequest, SQLResponse,
+    QuickActionRequest, QuickActionResponse,
+    ChartConfigRequest, ChartConfigResponse
 )
 import json
 
@@ -32,5 +34,30 @@ async def generate_sql(request: SQLRequest):
     try:
         sql = await llm_service.generate_sql(request.question, request.schema_info)
         return {"sql_query": sql}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/quick-actions", response_model=QuickActionResponse)
+async def get_quick_actions(request: QuickActionRequest):
+    try:
+        result = await llm_service.generate_quick_actions(
+            table_name=request.table_name,
+            columns=request.columns,
+            dtypes=request.dtypes,
+            sample_rows=request.sample_rows
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/generate-chart", response_model=ChartConfigResponse)
+async def generate_chart_config(request: ChartConfigRequest):
+    try:
+        result = await llm_service.generate_chart_config(
+            user_query=request.user_query,
+            columns=request.columns,
+            dtypes=request.dtypes
+        )
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

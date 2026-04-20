@@ -15,6 +15,7 @@ function App() {
   const [charts, setCharts] = useState(null);
   const [base64Charts, setBase64Charts] = useState(null);
   const [anomalies, setAnomalies] = useState(null);
+  const [quickActions, setQuickActions] = useState([]);
 
   const handleUploadSuccess = async (file) => {
     setLoading(true);
@@ -76,6 +77,19 @@ function App() {
           { title: "Correlation Heatmap", data: chartsRes.correlation_base64 }
         ]);
       } catch (e) { console.error("Charts failed", e); }
+
+      // Fetch Quick Actions
+      try {
+        const quickActionsRes = await dataApi.getQuickActions(
+          summaryData.filename || "dataset",
+          summaryData.column_names,
+          summaryData.data_types,
+          summaryData.sample_data
+        );
+        if (quickActionsRes && quickActionsRes.quick_actions) {
+          setQuickActions(quickActionsRes.quick_actions);
+        }
+      } catch (e) { console.error("Quick Actions failed", e); }
       
     } catch (err) {
       console.error("General failure during data acquisition:", err);
@@ -85,6 +99,30 @@ function App() {
   const generateSql = async (fname, query) => {
     const schemaInfo = summary ? JSON.stringify(summary.data_types) : "";
     return await dataApi.generateSql(query, schemaInfo);
+  };
+
+  const handleSmartChart = async (query) => {
+    try {
+      const results = await dataApi.getSmartChart(query);
+      
+      // Handle array of charts from Universal Engine
+      const chartsToAppend = Array.isArray(results) ? results : [results];
+      
+      const newCharts = chartsToAppend
+        .filter(res => res && res.data)
+        .map(res => ({
+          type: res.chart_type || res.config?.chart_type,
+          title: res.title || res.config?.title,
+          reason: res.reason,
+          data: res.data
+        }));
+
+      if (newCharts.length > 0) {
+        setCharts(prev => [...newCharts, ...(prev || [])]);
+      }
+    } catch (e) {
+      console.error("Smart Chart generation failed", e);
+    }
   };
 
   return (
@@ -100,8 +138,10 @@ function App() {
       charts={charts}
       base64Charts={base64Charts}
       anomalies={anomalies}
+      quickActions={quickActions}
       handleUploadSuccess={handleUploadSuccess}
       generateSql={generateSql}
+      generateSmartChart={handleSmartChart}
     />
   );
 }
